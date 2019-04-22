@@ -46,6 +46,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -164,6 +165,33 @@ func (is *I) Equal(a, b interface{}) {
 			return
 		}
 		is.logf("%s != %s", is.valWithType(a), is.valWithType(b))
+	}
+}
+
+func (is *I) GreaterThan(a, b interface{}) {
+
+	if isNil(a) || isNil(b) {
+		aLabel := is.valWithType(a)
+		bLabel := is.valWithType(b)
+		if isNil(a) {
+			aLabel = "<nil>"
+		}
+		if isNil(b) {
+			bLabel = "<nil>"
+		}
+		is.logf("%s != %s", aLabel, bLabel)
+		return
+	} else {
+		floatA, errA := strconv.ParseFloat(fmt.Sprintf("%d", a), 64)
+		floatB, errB := strconv.ParseFloat(fmt.Sprintf("%d", b), 64)
+		if errA != nil || errB != nil {
+			is.logf("Error in comparison (%d > %d): ParseFloat returned: (%s, %s)", a, b, errA, errB)
+		}
+		if floatA <= floatB {
+			aLabel := is.valWithType(a)
+			bLabel := is.valWithType(b)
+			is.logf("%s <= %s", aLabel, bLabel)
+		}
 	}
 }
 
